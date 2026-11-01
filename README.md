@@ -13,6 +13,8 @@ wholesaler, Dec 2009 – Dec 2011). It goes from a messy Excel export to:
 
 > One command reproduces everything: `python run_pipeline.py` (about 35 seconds after the first Excel read).
 
+**Tech stack:** Python · SQL (DuckDB) · pandas · scikit-learn · Streamlit · Altair · Claude API · Power BI (DAX) · pytest
+
 ---
 
 ## Key results
