@@ -1,0 +1,114 @@
+// =====================================================================
+// Retail BI & Decision Support - DAX measures
+// Create a blank table called _Measures (Home > Enter data > OK) and add
+// each measure below to it (Modeling > New measure), one at a time.
+// Tables come from powerbi/data/*.csv (see POWER_BI_GUIDE.md).
+// =====================================================================
+
+// ---------- Core revenue ----------
+Net Revenue = SUM ( fact_sales[line_revenue] )
+
+Gross Revenue =
+CALCULATE ( SUM ( fact_sales[line_revenue] ), fact_sales[is_return] = FALSE () )
+
+Returns Value =
+- CALCULATE ( SUM ( fact_sales[line_revenue] ), fact_sales[is_return] = TRUE () )
+
+Return Rate % = DIVIDE ( [Returns Value], [Gross Revenue] )
+
+// ---------- Orders & customers ----------
+Orders =
+CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice] ), fact_sales[is_return] = FALSE () )
+
+Customers =
+CALCULATE (
+    DISTINCTCOUNT ( fact_sales[customer_id] ),
+    fact_sales[is_return] = FALSE (),
+    NOT ISBLANK ( fact_sales[customer_id] )
+)
+
+Avg Order Value = DIVIDE ( [Gross Revenue], [Orders] )
+
+Units Sold =
+CALCULATE ( SUM ( fact_sales[quantity] ), fact_sales[is_return] = FALSE () )
+
+Revenue per Customer =
+DIVIDE (
+    CALCULATE ( [Net Revenue], NOT ISBLANK ( fact_sales[customer_id] ) ),
+    [Customers]
+)
+
+Guest Revenue Share % =
+DIVIDE ( CALCULATE ( [Gross Revenue], fact_sales[is_guest] = TRUE () ), [Gross Revenue] )
+
+Repeat Customer Rate % =
+VAR CustomerOrders =
+    ADDCOLUMNS (
+        FILTER ( VALUES ( fact_sales[customer_id] ), NOT ISBLANK ( fact_sales[customer_id] ) ),
+        "@orders", [Orders]
+    )
+RETURN
+    DIVIDE (
+        COUNTROWS ( FILTER ( CustomerOrders, [@orders] > 1 ) ),
+        COUNTROWS ( FILTER ( CustomerOrders, [@orders] >= 1 ) )
+    )
+
+// ---------- Time intelligence (needs dim_date marked as date table) ----------
+Net Revenue PY =
+CALCULATE ( [Net Revenue], SAMEPERIODLASTYEAR ( dim_date[date] ) )
+
+Revenue YoY % = DIVIDE ( [Net Revenue] - [Net Revenue PY], [Net Revenue PY] )
+
+Net Revenue PM =
+CALCULATE ( [Net Revenue], DATEADD ( dim_date[date], -1, MONTH ) )
+
+Revenue MoM % = DIVIDE ( [Net Revenue] - [Net Revenue PM], [Net Revenue PM] )
+
+Net Revenue YTD = TOTALYTD ( [Net Revenue], dim_date[date] )
+
+Orders PY = CALCULATE ( [Orders], SAMEPERIODLASTYEAR ( dim_date[date] ) )
+
+Orders YoY % = DIVIDE ( [Orders] - [Orders PY], [Orders PY] )
+
+// ---------- Shares & ranking ----------
+Revenue Share of Total % =
+DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALLSELECTED ( dim_product ) ) )
+
+Product Revenue Rank =
+RANKX ( ALLSELECTED ( dim_product[description] ), [Net Revenue], , DESC, DENSE )
+
+// ---------- Segments ----------
+Champions Revenue = CALCULATE ( [Net Revenue], dim_customer[segment] = "Champions" )
+
+At Risk Revenue = CALCULATE ( [Net Revenue], dim_customer[segment] = "At Risk" )
+
+At Risk Customers =
+CALCULATE ( COUNTROWS ( dim_customer ), dim_customer[segment] = "At Risk" )
+
+Segment Revenue Share % =
+DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALL ( dim_customer[segment] ) ) )
+
+// ---------- Forecast ----------
+Actual Revenue (forecast table) = SUM ( fact_forecast[actual] )
+
+Backtest Prediction = SUM ( fact_forecast[backtest_prediction] )
+
+Forward Forecast = SUM ( fact_forecast[forward_forecast] )
+
+Forecast Lower 80 = SUM ( fact_forecast[lower_80] )
+
+Forecast Upper 80 = SUM ( fact_forecast[upper_80] )
+
+Backtest WAPE % =
+VAR Rows = FILTER ( fact_forecast, NOT ISBLANK ( fact_forecast[backtest_prediction] ) )
+RETURN
+    DIVIDE (
+        SUMX ( Rows, ABS ( fact_forecast[actual] - fact_forecast[backtest_prediction] ) ),
+        SUMX ( Rows, fact_forecast[actual] )
+    )
+
+// ---------- Anomalies ----------
+Flagged Orders = COUNTROWS ( order_anomalies )
+
+Flagged Orders Cancelled % =
+DIVIDE ( CALCULATE ( COUNTROWS ( order_anomalies ), order_anomalies[was_cancelled] = TRUE () ), [Flagged Orders] )

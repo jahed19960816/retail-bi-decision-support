@@ -1,0 +1,117 @@
+{
+  "period": "Dec 2009 - Dec 2011 (UCI Online Retail II, UK online gift wholesaler)",
+  "net_revenue": 18926847.2,
+  "gross_revenue": 19643309.77,
+  "return_rate_pct": 3.65,
+  "orders": 39516,
+  "customers": 5852,
+  "avg_order_value": 497.1,
+  "repeat_customer_rate_pct": 72.35,
+  "guest_revenue_share_pct": 13.11,
+  "yoy_revenue_growth_pct": 1.9,
+  "yoy_orders_growth_pct": -4.0,
+  "yoy_aov_growth_pct": 6.8,
+  "top20_customers_revenue_share_pct": 76.86,
+  "top20_products_revenue_share_pct": 77.96,
+  "segments": {
+    "Champions": {
+      "customers": 1189,
+      "customer_share_pct": 20.4,
+      "revenue_share_pct": 73.6,
+      "total_revenue": 12048534.6,
+      "median_recency_days": 17.0
+    },
+    "At Risk": {
+      "customers": 1442,
+      "customer_share_pct": 24.7,
+      "revenue_share_pct": 16.4,
+      "total_revenue": 2679069.8,
+      "median_recency_days": 184.5
+    },
+    "New / Promising": {
+      "customers": 1253,
+      "customer_share_pct": 21.5,
+      "revenue_share_pct": 6.3,
+      "total_revenue": 1025356.2,
+      "median_recency_days": 24.0
+    },
+    "Hibernating": {
+      "customers": 1950,
+      "customer_share_pct": 33.4,
+      "revenue_share_pct": 3.7,
+      "total_revenue": 608035.8,
+      "median_recency_days": 402.0
+    }
+  },
+  "fastest_growing_categories": [
+    {
+      "product_family": "Christmas & Seasonal",
+      "yoy_growth_pct": 18.5
+    },
+    {
+      "product_family": "Bags & Storage",
+      "yoy_growth_pct": 10.7
+    }
+  ],
+  "declining_categories": [
+    {
+      "product_family": "Jewellery & Accessories",
+      "yoy_growth_pct": -27.8
+    },
+    {
+      "product_family": "Candles & Lighting",
+      "yoy_growth_pct": -15.0
+    }
+  ],
+  "uk_revenue_share_pct": 85.43,
+  "top_export_markets": [
+    {
+      "country": "Ireland",
+      "net_revenue": 603116.61,
+      "customers": 3
+    },
+    {
+      "country": "Netherlands",
+      "net_revenue": 546095.43,
+      "customers": 22
+    },
+    {
+      "country": "Germany",
+      "net_revenue": 374573.51,
+      "customers": 107
+    }
+  ],
+  "top_return_losses": [
+    {
+      "description": "PAPER CRAFT , LITTLE BIRDIE",
+      "returned_value": 168469.6,
+      "return_rate_pct": 100.0
+    },
+    {
+      "description": "MEDIUM CERAMIC TOP STORAGE JAR",
+      "returned_value": 77479.64,
+      "return_rate_pct": 94.83
+    },
+    {
+      "description": "REGENCY CAKESTAND 3 TIER",
+      "returned_value": 16545.3,
+      "return_rate_pct": 5.0
+    }
+  ],
+  "median_days_between_orders": 25.0,
+  "forecast": {
+    "daily_wape_pct": 28.21,
+    "best_baseline": "Last year, same weekday",
+    "best_baseline_wape_pct": 31.6,
+    "error_reduction_pct": 10.7,
+    "next_28_days_total": 493123.08
+  },
+  "anomalies": {
+    "orders_scored": 39516,
+    "orders_flagged": 181,
+    "flagged_cancellation_rate_pct": 11.6,
+    "normal_cancellation_rate_pct": 5.8,
+    "lift": 2.0,
+    "flagged_order_value_share_pct": 9.7
+  }
+}

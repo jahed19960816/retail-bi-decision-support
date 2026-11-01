@@ -1,0 +1,8 @@
+spec,validation_daily_wape_pct
+gbm_mse_shallow+last_year_30,31.72
+gbm_mse_shallow,31.83
+gbm_mae_shallow,31.87
+gbm_mae,32.1
+gbm_mse_shallow+last_year_50,32.76
+gbm_mse,33.88
+gbm_log_mse,72.16

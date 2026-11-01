@@ -1,0 +1,10 @@
+[project]
+name = "retail-bi-decision-support"
+version = "1.0.0"
+description = "AI-powered retail business intelligence & decision support on 1M+ real transactions"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"

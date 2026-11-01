@@ -1,0 +1,14 @@
+name,passed,detail,critical
+No nulls in required columns,True,"null counts: {'invoice': 0, 'stock_code': 0, 'description': 0, 'quantity': 0, 'invoice_date': 0, 'unit_price': 0, 'country': 0, 'line_revenue': 0}",True
+No duplicate lines,True,0 duplicate lines,True
+Unit price is positive,True,min price = 0.001,True
+Sales quantities are positive,True,min sales qty = 1,True
+Return quantities are negative,True,max return qty = -1,True
+Returns are exactly the 'C' invoices,True,is_return flag matches invoice prefix,True
+Line revenue reconciles to qty x price,True,max gap = 0.0000,True
+No non-product stock codes,True,0 non-product lines,True
+Dates inside dataset window,True,2009-12-01 07:45:00 -> 2011-12-09 12:50:00,True
+One timestamp per invoice,False,max distinct timestamps per invoice = 2,False
+One customer per invoice,True,max customers per invoice = 1,True
+Guest (no customer ID) share below 30%,True,22.2% of lines,False
+Net revenue is positive,True,"net revenue = 18,926,847.20",True

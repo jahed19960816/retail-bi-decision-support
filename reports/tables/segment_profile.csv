@@ -1,0 +1,5 @@
+segment,customers,avg_recency_days,median_recency_days,avg_orders,avg_revenue,median_revenue,total_revenue,customer_share_pct,revenue_share_pct,recommended_action
+Champions,1189,28.2,17.0,19.1,10133.3,4808.9,12048534.6,20.4,73.6,"Protect: VIP service, early access to new ranges, referral asks. Avoid blanket discounts."
+At Risk,1442,227.3,184.5,5.1,1857.9,1431.0,2679069.8,24.7,16.4,"Win back now: personal outreach to high-value accounts, time-limited reorder offer within 30 days."
+New / Promising,1253,29.1,24.0,3.0,818.3,705.1,1025356.2,21.5,6.3,Convert to repeat: onboarding sequence and a second-order incentive within 60 days.
+Hibernating,1950,395.4,402.0,1.4,311.8,266.4,608035.8,33.4,3.7,Low-cost reactivation email only; suppress from expensive campaigns.

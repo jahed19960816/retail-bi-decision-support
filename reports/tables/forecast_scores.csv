@@ -1,0 +1,5 @@
+method,daily_wape_pct,weekly_wape_pct,mae,rmse,bias_pct,coverage_pct
+Model: gradient boosting + last-year blend,28.21,14.4,9133.0,13183.0,-5.59,100.0
+"Seasonal naive (same weekday, 4 weeks ago)",41.32,22.19,13375.0,19090.0,-12.54,100.0
+4-week same-weekday average,33.21,20.29,10751.0,16014.0,-15.89,100.0
+"Last year, same weekday",31.6,15.54,10230.0,15285.0,-5.01,100.0

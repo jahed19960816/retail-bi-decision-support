@@ -1,0 +1,8 @@
+step,reason,rows_before,rows_removed,rows_after
+Remove sheet overlap,2010-12-01..09 appears in both yearly sheets; keep one copy,1067371,22523,1044848
+Remove exact duplicates,Identical line entered more than once,1044848,11814,1033034
+Remove bad-debt adjustments,"Accounting entries, not sales",1033034,6,1033028
+Remove non-product lines,"Postage, fees, manual adjustments, vouchers, tests",1033028,5793,1027235
+Remove zero/negative prices,Free items and stock write-offs,1027235,5965,1021270
+Remove stock write-offs,Non-invoice lines with quantity <= 0,1021270,0,1021270
+Remove malformed returns,Cancellation lines must have quantity < 0,1021270,0,1021270

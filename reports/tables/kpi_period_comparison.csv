@@ -1,0 +1,3 @@
+period,net_revenue,orders,customers,avg_order_value,return_rate_pct,revenue_growth_pct,orders_growth_pct,customers_growth_pct,aov_growth_pct
+Dec 2009 - Nov 2010,9156080.89,19743,4239,475.95,2.56,,,,
+Dec 2010 - Nov 2011,9330366.75,18957,4293,508.11,3.13,1.9,-4.0,1.3,6.8
