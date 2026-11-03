@@ -12,7 +12,7 @@ popular AS (
     SELECT stock_code, COUNT(*) AS item_orders
     FROM order_items
     GROUP BY stock_code
-    ORDER BY item_orders DESC
+    ORDER BY item_orders DESC, stock_code  -- tie-break so the top 300 is the same on every run
     LIMIT 300
 ),
 pairs AS (
@@ -41,5 +41,5 @@ JOIN popular cb     ON cb.stock_code = pairs.item_b
 JOIN dim_product pa ON pa.stock_code = pairs.item_a
 JOIN dim_product pb ON pb.stock_code = pairs.item_b
 WHERE pair_orders >= 300
-ORDER BY lift DESC
+ORDER BY lift DESC, pair_orders DESC, pairs.item_a, pairs.item_b
 LIMIT 30

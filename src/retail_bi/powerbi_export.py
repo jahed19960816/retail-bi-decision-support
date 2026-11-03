@@ -14,7 +14,7 @@ order_anomalies       orders flagged for review by the anomaly detector
 
 import pandas as pd
 
-from retail_bi import config
+from retail_bi import config, warehouse
 
 
 def export(sales: pd.DataFrame, dims: dict[str, pd.DataFrame], segmented: pd.DataFrame, segment_profile: pd.DataFrame,
@@ -41,7 +41,8 @@ def export(sales: pd.DataFrame, dims: dict[str, pd.DataFrame], segmented: pd.Dat
     customer["segment"] = customer["segment"].fillna("No net purchases")
     save(customer, "dim_customer")
 
-    date = dims["dim_date"].copy()
+    # Run the calendar through the forecast horizon so forward-forecast dates join to dim_date.
+    date = warehouse.build_dim_date(sales, end=future.index.max())
     date["date"] = date["date"].dt.date
     save(date, "dim_date")
 

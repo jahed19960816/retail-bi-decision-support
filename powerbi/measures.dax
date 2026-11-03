@@ -100,11 +100,11 @@ Forecast Lower 80 = SUM ( fact_forecast[lower_80] )
 Forecast Upper 80 = SUM ( fact_forecast[upper_80] )
 
 Backtest WAPE % =
-VAR Rows = FILTER ( fact_forecast, NOT ISBLANK ( fact_forecast[backtest_prediction] ) )
+VAR ScoredDays = FILTER ( fact_forecast, NOT ISBLANK ( fact_forecast[backtest_prediction] ) )
 RETURN
     DIVIDE (
-        SUMX ( Rows, ABS ( fact_forecast[actual] - fact_forecast[backtest_prediction] ) ),
-        SUMX ( Rows, fact_forecast[actual] )
+        SUMX ( ScoredDays, ABS ( fact_forecast[actual] - fact_forecast[backtest_prediction] ) ),
+        SUMX ( ScoredDays, fact_forecast[actual] )
     )
 
 // ---------- Anomalies ----------

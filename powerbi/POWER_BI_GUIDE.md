@@ -21,13 +21,16 @@ Load all eight files from `powerbi/data/`:
 | fact_sales.csv | ~1.02M | Fact table: one row per invoice line (returns are negative) |
 | dim_product.csv | 4.7K | Product master + `product_family` |
 | dim_customer.csv | 5.9K | Customer master + cohort + RFM `segment` / scores |
-| dim_date.csv | 739 | Calendar |
+| dim_date.csv | 767 | Calendar (runs through the end of the 28-day forecast) |
 | fact_forecast.csv | 767 | Daily actuals, backtest predictions, 28-day forecast + 80% band |
 | fact_cohort_retention.csv | 325 | Cohort × months-since-first-purchase retention % |
 | segment_profile.csv | 4 | One row per segment with the recommended action |
 | order_anomalies.csv | 181 | Orders flagged for review |
 
 In Power Query, check these column types:
+- `invoice` (in `fact_sales` and `order_anomalies`) and `stock_code` (in `fact_sales` and `dim_product`): **Text**.
+  Return invoices start with "C" (e.g. C489449), so a Whole Number type turns them into errors.
+- `dim_date[year_month]` and `fact_cohort_retention[cohort]`: **Text**
 - `fact_sales[order_date]`, `dim_date[date]` and `fact_forecast[date]`: **Date**
 - `fact_sales[invoice_date]`: Date/Time
 - `customer_id`: Whole number
@@ -47,7 +50,10 @@ Then click **Close & Apply**.
 Then:
 - **Mark `dim_date` as a date table:** Table tools → Mark as date table → `date`.
 - **Sort the month names:** sort `dim_date[month_name]` by `dim_date[month]` (Column tools → Sort by column).
-- **Add the measures:** create a blank `_Measures` table and paste in the measures from `measures.dax`. Format the money measures as Currency (£) and the % measures as Percentage.
+- **Add the measures:** create a blank `_Measures` table (Home → Enter data → name it `_Measures` → Load).
+  Fast way: open **DAX query view** (left sidebar), paste all of `measures_query.dax`, click **Run**, then
+  **Update model with changes**; all 32 measures are added at once. Slow way: add each measure from
+  `measures.dax` with Modeling → New measure. Format the money measures as Currency (£) and the % measures as Percentage.
 
 ## 3. Report pages
 

@@ -52,8 +52,8 @@ def build_dim_customer(sales: pd.DataFrame) -> pd.DataFrame:
     return dim
 
 
-def build_dim_date(sales: pd.DataFrame) -> pd.DataFrame:
-    days = pd.date_range(sales["order_date"].min(), sales["order_date"].max(), freq="D")
+def build_dim_date(sales: pd.DataFrame, end: pd.Timestamp | None = None) -> pd.DataFrame:
+    days = pd.date_range(sales["order_date"].min(), end or sales["order_date"].max(), freq="D")
     dim = pd.DataFrame({"date": days})
     dim["year"] = dim["date"].dt.year
     dim["quarter"] = "Q" + dim["date"].dt.quarter.astype(str)
