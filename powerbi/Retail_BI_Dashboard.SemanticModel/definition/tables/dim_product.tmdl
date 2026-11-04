@@ -1,0 +1,71 @@
+table dim_product
+	lineageTag: baf72a79-5286-43d9-b5f7-aea290b8c28b
+
+	column stock_code
+		dataType: string
+		lineageTag: fb14015a-1036-49e2-99a8-b58a66911af7
+		summarizeBy: none
+		sourceColumn: stock_code
+
+		annotation SummarizationSetBy = User
+
+	column description
+		dataType: string
+		lineageTag: 1f2b66c4-ee80-4c0a-9c37-818c73ab8062
+		summarizeBy: none
+		sourceColumn: description
+
+		annotation SummarizationSetBy = User
+
+	column median_unit_price
+		dataType: double
+		formatString: \£#,0.00;-\£#,0.00;\£#,0.00
+		lineageTag: d328a629-f2d0-4bb8-afe8-b35a539025a5
+		summarizeBy: none
+		sourceColumn: median_unit_price
+
+		annotation SummarizationSetBy = User
+
+	column first_sold
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: abf8d87b-6f34-4c53-bf2b-8dddccd0828d
+		summarizeBy: none
+		sourceColumn: first_sold
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column last_sold
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 07432f6c-e948-4b53-9b25-0a52ca808fd2
+		summarizeBy: none
+		sourceColumn: last_sold
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column product_family
+		dataType: string
+		lineageTag: 3dfd7f11-535f-49a0-9322-89d1b6c38a0a
+		summarizeBy: none
+		sourceColumn: product_family
+
+		annotation SummarizationSetBy = User
+
+	partition dim_product = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "dim_product.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"stock_code", type text}, {"description", type text}, {"median_unit_price", type number}, {"first_sold", type datetime}, {"last_sold", type datetime}, {"product_family", type text}}, "en-US"),
+				    #"Date Only" = Table.TransformColumnTypes(#"Changed Type", {{"first_sold", type date}, {"last_sold", type date}})
+				in
+				    #"Date Only"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "card_4",
+  "position": {
+    "x": 772,
+    "y": 80,
+    "z": 7000,
+    "width": 240,
+    "height": 88,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Repeat Customer Rate %"
+                }
+              },
+              "queryRef": "_Measures.Repeat Customer Rate %",
+              "nativeQueryRef": "Repeat Customer Rate %",
+              "displayName": "Repeat Customer Rate %"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

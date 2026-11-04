@@ -18,3 +18,7 @@ powerbi/data/
 
 # Private notes (resume / LinkedIn drafts)
 _notes_for_jahed/
+
+# Power BI project: per-user settings and the local data cache
+**/.pbi/localSettings.json
+**/.pbi/cache.abf

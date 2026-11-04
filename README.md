@@ -120,6 +120,23 @@ flowchart LR
 
 ---
 
+## Power BI dashboard
+
+A 4-page Power BI report saved as a Power BI Project ([`powerbi/Retail_BI_Dashboard.pbip`](powerbi/Retail_BI_Dashboard.pbip)): 8 data tables, 32 DAX measures, headline KPIs checked against the Python pipeline.
+
+<table>
+<tr>
+<td><img src="reports/figures/powerbi_1_executive_overview.png" alt="Executive overview"></td>
+<td><img src="reports/figures/powerbi_2_customers_segments.png" alt="Customers and segments"></td>
+</tr>
+<tr>
+<td><img src="reports/figures/powerbi_3_products_returns.png" alt="Products and returns"></td>
+<td><img src="reports/figures/powerbi_4_forecast_monitoring.png" alt="Forecast and monitoring"></td>
+</tr>
+</table>
+
+To open it: run `python run_pipeline.py` (writes `powerbi/data/`), double-click the `.pbip` file in Power BI Desktop and click **Refresh**. On another PC, first set the folder in **Transform data > Edit parameters > DataFolder**.
+
 ## Run it
 
 ```bash

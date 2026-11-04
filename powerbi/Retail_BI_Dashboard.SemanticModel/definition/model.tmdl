@@ -1,0 +1,24 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table fact_sales
+ref table dim_product
+ref table dim_customer
+ref table dim_date
+ref table fact_forecast
+ref table fact_cohort_retention
+ref table segment_profile
+ref table order_anomalies
+ref table _Measures
+
+ref cultureInfo en-US
+

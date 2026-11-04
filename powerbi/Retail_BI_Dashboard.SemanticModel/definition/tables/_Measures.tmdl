@@ -1,0 +1,203 @@
+table _Measures
+	lineageTag: cfa2f869-0708-4deb-bddf-20339b3d1289
+
+	measure 'Net Revenue' = SUM ( fact_sales[line_revenue] )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Core revenue
+		lineageTag: 4c44a1b5-0abb-479d-9132-0c1f54c8ecfc
+
+	measure 'Gross Revenue' = CALCULATE ( SUM ( fact_sales[line_revenue] ), fact_sales[is_return] = FALSE () )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Core revenue
+		lineageTag: d6ff3279-18d8-4581-b66f-3bd2a755e373
+
+	measure 'Returns Value' = - CALCULATE ( SUM ( fact_sales[line_revenue] ), fact_sales[is_return] = TRUE () )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Core revenue
+		lineageTag: 31add75b-443e-4ebb-8c35-23748ed6be14
+
+	measure 'Return Rate %' = DIVIDE ( [Returns Value], [Gross Revenue] )
+		formatString: 0.0%
+		displayFolder: Core revenue
+		lineageTag: 407ae026-1b8c-4ac6-994f-d9ef881b4292
+
+	measure Orders = CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice] ), fact_sales[is_return] = FALSE () )
+		formatString: #,0
+		displayFolder: Orders & customers
+		lineageTag: e98e266d-7df0-442f-84c3-f8ba7d50b49a
+
+	measure Customers =
+			CALCULATE (
+			    DISTINCTCOUNT ( fact_sales[customer_id] ),
+			    fact_sales[is_return] = FALSE (),
+			    NOT ISBLANK ( fact_sales[customer_id] )
+			)
+		formatString: #,0
+		displayFolder: Orders & customers
+		lineageTag: e5ddad15-d9b3-4531-8615-b70349bb944a
+
+	measure 'Avg Order Value' = DIVIDE ( [Gross Revenue], [Orders] )
+		formatString: \£#,0.00;-\£#,0.00;\£#,0.00
+		displayFolder: Orders & customers
+		lineageTag: 154ed611-1c2f-41e9-9f30-1fa96980a6f6
+
+	measure 'Units Sold' = CALCULATE ( SUM ( fact_sales[quantity] ), fact_sales[is_return] = FALSE () )
+		formatString: #,0
+		displayFolder: Orders & customers
+		lineageTag: 6536e21d-b455-4a7e-9742-1884f3776246
+
+	measure 'Revenue per Customer' =
+			DIVIDE (
+			    CALCULATE ( [Net Revenue], NOT ISBLANK ( fact_sales[customer_id] ) ),
+			    [Customers]
+			)
+		formatString: \£#,0.00;-\£#,0.00;\£#,0.00
+		displayFolder: Orders & customers
+		lineageTag: 69ced53e-5694-4e08-8ea8-f24cd64d21c7
+
+	measure 'Guest Revenue Share %' = DIVIDE ( CALCULATE ( [Gross Revenue], fact_sales[is_guest] = TRUE () ), [Gross Revenue] )
+		formatString: 0.0%
+		displayFolder: Orders & customers
+		lineageTag: d2b9dc85-7de8-40ec-9f0e-4b21cbf7370a
+
+	measure 'Repeat Customer Rate %' =
+			VAR CustomerOrders =
+			    ADDCOLUMNS (
+			        FILTER ( VALUES ( fact_sales[customer_id] ), NOT ISBLANK ( fact_sales[customer_id] ) ),
+			        "@orders", [Orders]
+			    )
+			RETURN
+			    DIVIDE (
+			        COUNTROWS ( FILTER ( CustomerOrders, [@orders] > 1 ) ),
+			        COUNTROWS ( FILTER ( CustomerOrders, [@orders] >= 1 ) )
+			    )
+		formatString: 0.0%
+		displayFolder: Orders & customers
+		lineageTag: 15ee40dc-0ccf-4fca-b223-891ae65e4637
+
+	measure 'Net Revenue PY' = CALCULATE ( [Net Revenue], SAMEPERIODLASTYEAR ( dim_date[date] ) )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Time intelligence
+		lineageTag: e31507e1-bee4-4cf4-a746-58e6451f1132
+
+	measure 'Revenue YoY %' = DIVIDE ( [Net Revenue] - [Net Revenue PY], [Net Revenue PY] )
+		formatString: 0.0%
+		displayFolder: Time intelligence
+		lineageTag: e479603f-d64e-41c6-a640-252e29eb2daf
+
+	measure 'Net Revenue PM' = CALCULATE ( [Net Revenue], DATEADD ( dim_date[date], -1, MONTH ) )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Time intelligence
+		lineageTag: 6b03be05-e2e0-4259-8186-333f003ffe40
+
+	measure 'Revenue MoM %' = DIVIDE ( [Net Revenue] - [Net Revenue PM], [Net Revenue PM] )
+		formatString: 0.0%
+		displayFolder: Time intelligence
+		lineageTag: c41e7f15-9961-4804-9d4d-3974de972dad
+
+	measure 'Net Revenue YTD' = TOTALYTD ( [Net Revenue], dim_date[date] )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Time intelligence
+		lineageTag: ed1ab94c-dc93-4ed8-809f-e0d92762ff4b
+
+	measure 'Orders PY' = CALCULATE ( [Orders], SAMEPERIODLASTYEAR ( dim_date[date] ) )
+		formatString: #,0
+		displayFolder: Time intelligence
+		lineageTag: c57f426f-6717-46a5-8a92-e3ad1766ef1a
+
+	measure 'Orders YoY %' = DIVIDE ( [Orders] - [Orders PY], [Orders PY] )
+		formatString: 0.0%
+		displayFolder: Time intelligence
+		lineageTag: b8aeff7d-271c-4f7a-b700-3ae0135a3bc1
+
+	measure 'Revenue Share of Total %' = DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALLSELECTED ( dim_product ) ) )
+		formatString: 0.0%
+		displayFolder: Shares & ranking
+		lineageTag: 184da843-22ad-4d53-be9c-cdbd5aa7d2fb
+
+	measure 'Product Revenue Rank' = RANKX ( ALLSELECTED ( dim_product[description] ), [Net Revenue], , DESC, DENSE )
+		formatString: 0
+		displayFolder: Shares & ranking
+		lineageTag: e2f52a2e-bd9e-43aa-8da1-55698231be7e
+
+	measure 'Champions Revenue' = CALCULATE ( [Net Revenue], dim_customer[segment] = "Champions" )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Segments
+		lineageTag: 260adc03-2e46-42ea-aeba-6dd23e217921
+
+	measure 'At Risk Revenue' = CALCULATE ( [Net Revenue], dim_customer[segment] = "At Risk" )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Segments
+		lineageTag: 19f259c7-8348-4aaf-bb12-7cd779802e3d
+
+	measure 'At Risk Customers' = CALCULATE ( COUNTROWS ( dim_customer ), dim_customer[segment] = "At Risk" )
+		formatString: #,0
+		displayFolder: Segments
+		lineageTag: 3a81fc58-57c6-48fe-9d6a-08d4d7dcdcf8
+
+	measure 'Segment Revenue Share %' = DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALL ( dim_customer[segment] ) ) )
+		formatString: 0.0%
+		displayFolder: Segments
+		lineageTag: fec285b0-f093-4af0-98aa-6acdd4855d97
+
+	measure 'Actual Revenue (forecast table)' = SUM ( fact_forecast[actual] )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Forecast
+		lineageTag: aaea0aca-8062-4901-b8b4-4ba2560a1db3
+
+	measure 'Backtest Prediction' = SUM ( fact_forecast[backtest_prediction] )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Forecast
+		lineageTag: cd3ffc9f-e04d-4b27-9791-969edd75a101
+
+	measure 'Forward Forecast' = SUM ( fact_forecast[forward_forecast] )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Forecast
+		lineageTag: 8a41e487-8d34-4e36-af93-aa97188d8677
+
+	measure 'Forecast Lower 80' = SUM ( fact_forecast[lower_80] )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Forecast
+		lineageTag: 8474d60a-353b-49d2-835f-458be0cc0980
+
+	measure 'Forecast Upper 80' = SUM ( fact_forecast[upper_80] )
+		formatString: \£#,0;-\£#,0;\£#,0
+		displayFolder: Forecast
+		lineageTag: 3186e741-600b-45f2-ba56-1befd81c7251
+
+	measure 'Backtest WAPE %' =
+			VAR ScoredDays = FILTER ( fact_forecast, NOT ISBLANK ( fact_forecast[backtest_prediction] ) )
+			RETURN
+			    DIVIDE (
+			        SUMX ( ScoredDays, ABS ( fact_forecast[actual] - fact_forecast[backtest_prediction] ) ),
+			        SUMX ( ScoredDays, fact_forecast[actual] )
+			    )
+		formatString: 0.0%
+		displayFolder: Forecast
+		lineageTag: 5db691f6-f0a0-4c51-8645-c900498195fb
+
+	measure 'Flagged Orders' = COUNTROWS ( order_anomalies )
+		formatString: #,0
+		displayFolder: Anomalies
+		lineageTag: d0b5f27b-9713-4ca2-8ba3-a967a3cc2185
+
+	measure 'Flagged Orders Cancelled %' = DIVIDE ( CALCULATE ( COUNTROWS ( order_anomalies ), order_anomalies[was_cancelled] = TRUE () ), [Flagged Orders] )
+		formatString: 0.0%
+		displayFolder: Anomalies
+		lineageTag: 3aca80e3-2993-44cf-bcff-842a8ccf4bdb
+
+	column Placeholder
+		dataType: string
+		isHidden
+		lineageTag: c01e79cb-4f38-4e76-b03f-bc915bef40cb
+		summarizeBy: none
+		sourceColumn: Placeholder
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [Placeholder = text], {})
+				in
+				    Source
+

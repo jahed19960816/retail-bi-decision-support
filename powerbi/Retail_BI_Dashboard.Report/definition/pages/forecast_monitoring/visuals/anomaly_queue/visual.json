@@ -1,0 +1,167 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "anomaly_queue",
+  "position": {
+    "x": 16.227549776513612,
+    "y": 495.56440471353108,
+    "z": 7000,
+    "height": 212.20642015440876,
+    "width": 1248.2730597318164,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "order_anomalies"
+                    }
+                  },
+                  "Property": "invoice"
+                }
+              },
+              "queryRef": "order_anomalies.invoice",
+              "nativeQueryRef": "invoice",
+              "displayName": "Invoice"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "order_anomalies"
+                    }
+                  },
+                  "Property": "invoice_date"
+                }
+              },
+              "queryRef": "order_anomalies.invoice_date",
+              "nativeQueryRef": "invoice_date",
+              "displayName": "Date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "order_anomalies"
+                    }
+                  },
+                  "Property": "country"
+                }
+              },
+              "queryRef": "order_anomalies.country",
+              "nativeQueryRef": "country",
+              "displayName": "Country"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "order_anomalies"
+                    }
+                  },
+                  "Property": "order_value"
+                }
+              },
+              "queryRef": "order_anomalies.order_value",
+              "nativeQueryRef": "order_value",
+              "displayName": "Order value"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "order_anomalies"
+                    }
+                  },
+                  "Property": "anomaly_score"
+                }
+              },
+              "queryRef": "order_anomalies.anomaly_score",
+              "nativeQueryRef": "anomaly_score",
+              "displayName": "Anomaly score"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "order_anomalies"
+                    }
+                  },
+                  "Property": "main_driver"
+                }
+              },
+              "queryRef": "order_anomalies.main_driver",
+              "nativeQueryRef": "main_driver",
+              "displayName": "Main driver"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "order_anomalies"
+                    }
+                  },
+                  "Property": "was_cancelled"
+                }
+              },
+              "queryRef": "order_anomalies.was_cancelled",
+              "nativeQueryRef": "was_cancelled",
+              "displayName": "Later cancelled"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "order_anomalies"
+                  }
+                },
+                "Property": "anomaly_score"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Order review queue (Isolation Forest), highest anomaly score first'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

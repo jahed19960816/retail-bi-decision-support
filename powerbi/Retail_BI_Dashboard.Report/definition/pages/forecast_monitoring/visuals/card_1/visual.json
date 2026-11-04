@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "card_1",
+  "position": {
+    "x": 16,
+    "y": 80,
+    "z": 2000,
+    "width": 303,
+    "height": 88,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Backtest WAPE %"
+                }
+              },
+              "queryRef": "_Measures.Backtest WAPE %",
+              "nativeQueryRef": "Backtest WAPE %",
+              "displayName": "Forecast error (WAPE, backtest)"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

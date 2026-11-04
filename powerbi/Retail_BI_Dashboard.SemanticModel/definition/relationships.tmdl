@@ -1,0 +1,18 @@
+relationship a46de61d-f7ed-4b06-bccc-53c76880143e
+	fromColumn: fact_sales.stock_code
+	toColumn: dim_product.stock_code
+
+relationship 45c6b2db-6b02-4947-a386-2eef460831ac
+	fromColumn: fact_sales.customer_id
+	toColumn: dim_customer.customer_id
+
+relationship 79edbc65-188a-4949-8c9f-78c8270392e6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_sales.order_date
+	toColumn: dim_date.date
+
+relationship 8303b2be-f7e4-4670-b2f5-ce82e4c80083
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_forecast.date
+	toColumn: dim_date.date
+

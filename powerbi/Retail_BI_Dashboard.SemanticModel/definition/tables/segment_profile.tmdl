@@ -1,0 +1,112 @@
+table segment_profile
+	lineageTag: 4fdb7775-3057-41b4-b6b4-87b70beb3ab0
+
+	column segment
+		dataType: string
+		lineageTag: 52723387-d98a-4941-9906-e7f21ef74a0c
+		summarizeBy: none
+		sourceColumn: segment
+
+		annotation SummarizationSetBy = User
+
+	column customers
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9be240a8-04ca-4f62-8f4e-a7d89c4ca1c2
+		summarizeBy: sum
+		sourceColumn: customers
+
+		annotation SummarizationSetBy = User
+
+	column avg_recency_days
+		dataType: double
+		formatString: 0.0
+		lineageTag: 03438ce3-96dd-4153-9803-f25d79d308eb
+		summarizeBy: average
+		sourceColumn: avg_recency_days
+
+		annotation SummarizationSetBy = User
+
+	column median_recency_days
+		dataType: double
+		formatString: 0.0
+		lineageTag: 53f9f9b2-b558-41a6-8a07-2bfb481b521b
+		summarizeBy: average
+		sourceColumn: median_recency_days
+
+		annotation SummarizationSetBy = User
+
+	column avg_orders
+		dataType: double
+		formatString: 0.0
+		lineageTag: 91e58d4a-7a5b-4d30-a844-07bd00838fc9
+		summarizeBy: average
+		sourceColumn: avg_orders
+
+		annotation SummarizationSetBy = User
+
+	column avg_revenue
+		dataType: double
+		formatString: \£#,0;-\£#,0;\£#,0
+		lineageTag: afdb828c-43ec-4617-82bf-4960bcc186bf
+		summarizeBy: average
+		sourceColumn: avg_revenue
+
+		annotation SummarizationSetBy = User
+
+	column median_revenue
+		dataType: double
+		formatString: \£#,0;-\£#,0;\£#,0
+		lineageTag: 802ff7e6-6a15-45c5-9ef4-201475e6e346
+		summarizeBy: average
+		sourceColumn: median_revenue
+
+		annotation SummarizationSetBy = User
+
+	column total_revenue
+		dataType: double
+		formatString: \£#,0;-\£#,0;\£#,0
+		lineageTag: cde8f69b-a557-498d-9729-8ce7cce940a6
+		summarizeBy: sum
+		sourceColumn: total_revenue
+
+		annotation SummarizationSetBy = User
+
+	column customer_share_pct
+		dataType: double
+		formatString: 0.0
+		lineageTag: 673716f5-bfa7-46ce-9615-23d8b0bfb389
+		summarizeBy: sum
+		sourceColumn: customer_share_pct
+
+		annotation SummarizationSetBy = User
+
+	column revenue_share_pct
+		dataType: double
+		formatString: 0.0
+		lineageTag: cb78e587-10e6-48c8-8542-4a2866c142e6
+		summarizeBy: sum
+		sourceColumn: revenue_share_pct
+
+		annotation SummarizationSetBy = User
+
+	column recommended_action
+		dataType: string
+		lineageTag: 15788ebb-42d3-4e2d-b993-3edd4c74a90c
+		summarizeBy: none
+		sourceColumn: recommended_action
+
+		annotation SummarizationSetBy = User
+
+	partition segment_profile = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "segment_profile.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"segment", type text}, {"customers", Int64.Type}, {"avg_recency_days", type number}, {"median_recency_days", type number}, {"avg_orders", type number}, {"avg_revenue", type number}, {"median_revenue", type number}, {"total_revenue", type number}, {"customer_share_pct", type number}, {"revenue_share_pct", type number}, {"recommended_action", type text}}, "en-US")
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

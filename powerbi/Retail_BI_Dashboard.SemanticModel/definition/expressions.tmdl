@@ -1,0 +1,8 @@
+/// Folder holding the CSVs written by python run_pipeline.py (powerbi/data). Change it here if the repo moves.
+expression DataFolder = "C:\retail-bi-decision-support\powerbi\data\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 56917fe1-c57b-4d21-8fbb-1294fba8badd
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,0 +1,49 @@
+table fact_cohort_retention
+	lineageTag: 3fe3cee3-0db7-4cd8-a348-abaad9cd548f
+
+	column cohort
+		dataType: string
+		lineageTag: beb1fd3f-d7f8-4da5-ae0e-48779ded180e
+		summarizeBy: none
+		sourceColumn: cohort
+
+		annotation SummarizationSetBy = User
+
+	column months_since_first
+		dataType: int64
+		lineageTag: 42cdee8a-88ba-4e0e-a1d1-1d1f08c54a3c
+		summarizeBy: none
+		sourceColumn: months_since_first
+
+		annotation SummarizationSetBy = User
+
+	column retention_pct
+		dataType: double
+		formatString: 0.0
+		lineageTag: 70b47ec7-3453-443b-a964-a5ca1b445c45
+		summarizeBy: average
+		sourceColumn: retention_pct
+
+		annotation SummarizationSetBy = User
+
+	column cohort_size
+		dataType: int64
+		formatString: #,0
+		lineageTag: 1d8d2f32-c9db-44ad-b27b-5a09a5a520b8
+		summarizeBy: sum
+		sourceColumn: cohort_size
+
+		annotation SummarizationSetBy = User
+
+	partition fact_cohort_retention = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "fact_cohort_retention.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"cohort", type text}, {"months_since_first", Int64.Type}, {"retention_pct", type number}, {"cohort_size", Int64.Type}}, "en-US")
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

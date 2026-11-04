@@ -1,0 +1,109 @@
+table order_anomalies
+	lineageTag: f9c32f9a-a1ef-49af-b017-7eee707359ac
+
+	column invoice
+		dataType: string
+		lineageTag: 54d3b575-8f59-4877-acae-8ee0395ebd69
+		summarizeBy: none
+		sourceColumn: invoice
+
+		annotation SummarizationSetBy = User
+
+	column invoice_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: c6390772-c8f1-4e94-8633-e92d06453cf8
+		summarizeBy: none
+		sourceColumn: invoice_date
+
+		annotation SummarizationSetBy = User
+
+	column customer_id
+		dataType: int64
+		lineageTag: 10dd1cd8-e33d-4fc6-a2e7-0b5e132a7055
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = User
+
+	column country
+		dataType: string
+		lineageTag: e40df20a-7aa4-4b5d-9524-2d65997dc95b
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = User
+
+	column order_value
+		dataType: double
+		formatString: \£#,0.00;-\£#,0.00;\£#,0.00
+		lineageTag: 9f8dfb96-cd31-4df6-aa0b-c24dbfab5051
+		summarizeBy: sum
+		sourceColumn: order_value
+
+		annotation SummarizationSetBy = User
+
+	column units
+		dataType: int64
+		formatString: #,0
+		lineageTag: ff88cadf-3bb9-45ba-b2cf-c281a588566a
+		summarizeBy: sum
+		sourceColumn: units
+
+		annotation SummarizationSetBy = User
+
+	column distinct_products
+		dataType: int64
+		formatString: #,0
+		lineageTag: 1a579bdb-7b40-408c-b4b7-81716be4245c
+		summarizeBy: sum
+		sourceColumn: distinct_products
+
+		annotation SummarizationSetBy = User
+
+	column max_line_qty
+		dataType: int64
+		formatString: #,0
+		lineageTag: d2d267df-1ff5-4f74-a3c6-d2027ca43dde
+		summarizeBy: max
+		sourceColumn: max_line_qty
+
+		annotation SummarizationSetBy = User
+
+	column anomaly_score
+		dataType: double
+		formatString: 0.000
+		lineageTag: a446fab5-cf37-4218-9586-77e8916ad4b2
+		summarizeBy: max
+		sourceColumn: anomaly_score
+
+		annotation SummarizationSetBy = User
+
+	column main_driver
+		dataType: string
+		lineageTag: da8a19a1-20d2-414f-8644-7efdc7908793
+		summarizeBy: none
+		sourceColumn: main_driver
+
+		annotation SummarizationSetBy = User
+
+	column was_cancelled
+		dataType: boolean
+		lineageTag: 11a449cd-d810-4557-b92b-6fa4ed21540e
+		summarizeBy: none
+		sourceColumn: was_cancelled
+
+		annotation SummarizationSetBy = User
+
+	partition order_anomalies = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "order_anomalies.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"invoice", type text}, {"invoice_date", type datetime}, {"customer_id", Int64.Type}, {"country", type text}, {"order_value", type number}, {"units", Int64.Type}, {"distinct_products", Int64.Type}, {"max_line_qty", Int64.Type}, {"anomaly_score", type number}, {"main_driver", type text}, {"was_cancelled", type logical}}, "en-US")
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

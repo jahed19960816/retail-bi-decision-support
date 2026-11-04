@@ -1,0 +1,148 @@
+table dim_customer
+	lineageTag: 2695423d-412c-4c77-aa67-cb20b5524608
+
+	column customer_id
+		dataType: int64
+		lineageTag: 786d9681-3955-4a62-8a24-3d8f00d0453e
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = User
+
+	column first_purchase
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 44b32237-b4ac-44de-8d94-4376e4264152
+		summarizeBy: none
+		sourceColumn: first_purchase
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column last_purchase
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: da6c0fd9-9a1a-4374-8f84-588a965d9239
+		summarizeBy: none
+		sourceColumn: last_purchase
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column country
+		dataType: string
+		lineageTag: f1f1e279-2041-4c55-ac45-c31ac9161b27
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = User
+
+	column cohort_month
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 828c0d76-5f4f-47e9-aee1-d8666c059f86
+		summarizeBy: none
+		sourceColumn: cohort_month
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column recency_days
+		dataType: int64
+		formatString: #,0
+		lineageTag: a6a19da4-fa11-4738-b77b-0c123b77ab32
+		summarizeBy: average
+		sourceColumn: recency_days
+
+		annotation SummarizationSetBy = User
+
+	column frequency
+		dataType: int64
+		formatString: #,0
+		lineageTag: d230fa1b-48b5-40f6-9eef-38ed4ab124fa
+		summarizeBy: average
+		sourceColumn: frequency
+
+		annotation SummarizationSetBy = User
+
+	column monetary
+		dataType: double
+		formatString: \£#,0;-\£#,0;\£#,0
+		lineageTag: 1a9cbcdd-2c49-4c00-9051-75c27a26503a
+		summarizeBy: sum
+		sourceColumn: monetary
+
+		annotation SummarizationSetBy = User
+
+	column r_score
+		dataType: int64
+		lineageTag: 35099547-d4f5-4f84-9ec2-b058f1f6b44b
+		summarizeBy: none
+		sourceColumn: r_score
+
+		annotation SummarizationSetBy = User
+
+	column f_score
+		dataType: int64
+		lineageTag: d46cee05-7bcb-43c4-a0d4-f1290f18b307
+		summarizeBy: none
+		sourceColumn: f_score
+
+		annotation SummarizationSetBy = User
+
+	column m_score
+		dataType: int64
+		lineageTag: 11b64ae8-95e5-47d9-8fbb-8656b93c44bb
+		summarizeBy: none
+		sourceColumn: m_score
+
+		annotation SummarizationSetBy = User
+
+	column rfm_score
+		dataType: int64
+		lineageTag: 3db7f392-9892-414e-9640-c75db55fda1c
+		summarizeBy: none
+		sourceColumn: rfm_score
+
+		annotation SummarizationSetBy = User
+
+	column rfm_code
+		dataType: string
+		lineageTag: d163968d-2ef3-47e7-a8d1-081d661de590
+		summarizeBy: none
+		sourceColumn: rfm_code
+
+		annotation SummarizationSetBy = User
+
+	column segment
+		dataType: string
+		lineageTag: 289f8560-db69-4b28-a137-821ba4ed11b6
+		summarizeBy: none
+		sourceColumn: segment
+
+		annotation SummarizationSetBy = User
+
+	column recommended_action
+		dataType: string
+		lineageTag: f68d20cd-b2de-4898-a1c7-f2cf0622bbdb
+		summarizeBy: none
+		sourceColumn: recommended_action
+
+		annotation SummarizationSetBy = User
+
+	partition dim_customer = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "dim_customer.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"customer_id", Int64.Type}, {"first_purchase", type datetime}, {"last_purchase", type datetime}, {"country", type text}, {"cohort_month", type datetime}, {"recency_days", Int64.Type}, {"frequency", Int64.Type}, {"monetary", type number}, {"r_score", Int64.Type}, {"f_score", Int64.Type}, {"m_score", Int64.Type}, {"rfm_score", Int64.Type}, {"rfm_code", type text}, {"segment", type text}, {"recommended_action", type text}}, "en-US"),
+				    #"Date Only" = Table.TransformColumnTypes(#"Changed Type", {{"first_purchase", type date}, {"last_purchase", type date}, {"cohort_month", type date}})
+				in
+				    #"Date Only"
+
+	annotation PBI_ResultType = Table
+

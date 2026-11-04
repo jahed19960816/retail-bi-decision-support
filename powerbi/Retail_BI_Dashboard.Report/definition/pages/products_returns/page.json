@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "products_returns",
+  "displayName": "Products & returns",
+  "displayOption": "FitToPage",
+  "height": 948,
+  "width": 1280
+}

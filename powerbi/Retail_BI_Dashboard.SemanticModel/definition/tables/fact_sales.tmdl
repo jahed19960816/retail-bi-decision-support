@@ -1,0 +1,110 @@
+table fact_sales
+	lineageTag: c0fdc78c-70ce-4201-bf1f-25bd8263b00f
+
+	column invoice
+		dataType: string
+		lineageTag: 5607b1b8-bc56-43e9-8adb-be3e2950ffa1
+		summarizeBy: none
+		sourceColumn: invoice
+
+		annotation SummarizationSetBy = User
+
+	column stock_code
+		dataType: string
+		lineageTag: 4cd476f6-125b-41f8-8709-aac89c80572f
+		summarizeBy: none
+		sourceColumn: stock_code
+
+		annotation SummarizationSetBy = User
+
+	column customer_id
+		dataType: int64
+		lineageTag: 5263abf4-33c1-493e-8e12-b576e09787ae
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = User
+
+	column country
+		dataType: string
+		lineageTag: b080cadb-18ca-4612-9d79-f5c3a9c6d335
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = User
+
+	column invoice_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: c80c412e-4230-4cd4-b334-fcd1c6d112af
+		summarizeBy: none
+		sourceColumn: invoice_date
+
+		annotation SummarizationSetBy = User
+
+	column order_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: b70b75e1-2362-4c74-a676-8e6588346382
+		summarizeBy: none
+		sourceColumn: order_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column quantity
+		dataType: int64
+		formatString: #,0
+		lineageTag: 851e9033-6b00-4971-b50b-21116688ada6
+		summarizeBy: sum
+		sourceColumn: quantity
+
+		annotation SummarizationSetBy = User
+
+	column unit_price
+		dataType: double
+		formatString: \£#,0.00;-\£#,0.00;\£#,0.00
+		lineageTag: 613891f1-bb56-44cf-bf2f-6b4d7d73d578
+		summarizeBy: none
+		sourceColumn: unit_price
+
+		annotation SummarizationSetBy = User
+
+	column line_revenue
+		dataType: double
+		formatString: \£#,0.00;-\£#,0.00;\£#,0.00
+		lineageTag: 7a70cc59-48b1-4582-a804-15a9c50c7f46
+		summarizeBy: sum
+		sourceColumn: line_revenue
+
+		annotation SummarizationSetBy = User
+
+	column is_return
+		dataType: boolean
+		lineageTag: c64ec065-bb23-4334-8ee3-c9a473354e66
+		summarizeBy: none
+		sourceColumn: is_return
+
+		annotation SummarizationSetBy = User
+
+	column is_guest
+		dataType: boolean
+		lineageTag: 1bb5c871-b71f-460f-aab7-1820392b9f06
+		summarizeBy: none
+		sourceColumn: is_guest
+
+		annotation SummarizationSetBy = User
+
+	partition fact_sales = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "fact_sales.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"invoice", type text}, {"stock_code", type text}, {"customer_id", Int64.Type}, {"country", type text}, {"invoice_date", type datetime}, {"order_date", type date}, {"quantity", Int64.Type}, {"unit_price", type number}, {"line_revenue", type number}, {"is_return", type logical}, {"is_guest", type logical}}, "en-US")
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

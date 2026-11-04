@@ -6,6 +6,15 @@ Everything Power BI needs is already prepared by the Python pipeline:
 - **Measures:** `powerbi/measures.dax`, 30+ DAX measures to paste in.
 - **Design:** the page layouts below (5 analytical pages).
 
+**The finished report is already in this folder:** `Retail_BI_Dashboard.pbip`, a Power BI Project with its
+`.Report` and `.SemanticModel` folders. Keep all three together. To open it, run `python run_pipeline.py`,
+double-click the `.pbip` in Power BI Desktop and click **Refresh**. If the repo is in a different folder, first set
+the path in **Transform data → Edit parameters → DataFolder**.
+
+It has 4 pages and differs from the layouts below in a few places: page 3 uses a family → product matrix instead of a
+decomposition tree, page 4 draws the 80% band as two lines, and there is no Smart narrative or Q&A page. The steps
+below still work if you want to build it by hand.
+
 > **Mac users:** Power BI Desktop runs only on Windows. Options: a Windows PC or laptop, a Windows VM
 > (Parallels or UTM), or a cloud Windows desktop. The free Power BI web service can show reports, but
 > building the data model and DAX is far easier in Desktop.

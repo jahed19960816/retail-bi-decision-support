@@ -1,0 +1,117 @@
+{
+  "name": "Retail BI",
+  "dataColors": [
+    "#2a78d6",
+    "#eb6834",
+    "#8c8c8c",
+    "#1aab40",
+    "#d64550",
+    "#744ec2",
+    "#d9b300",
+    "#197278",
+    "#12239e",
+    "#e044a7"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#252423",
+  "tableAccent": "#2a78d6",
+  "good": "#1aab40",
+  "neutral": "#d9b300",
+  "bad": "#d64550",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#E1E4E8"
+              }
+            },
+            "radius": 8
+          }
+        ],
+        "title": [
+          {
+            "fontSize": 12,
+            "bold": true,
+            "fontColor": {
+              "solid": {
+                "color": "#1b2a41"
+              }
+            }
+          }
+        ],
+        "subTitle": [
+          {
+            "show": false
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": {
+              "solid": {
+                "color": "#F3F5F8"
+              }
+            },
+            "transparency": 0
+          }
+        ]
+      }
+    },
+    "textbox": {
+      "*": {
+        "background": [
+          {
+            "show": false
+          }
+        ],
+        "border": [
+          {
+            "show": false
+          }
+        ]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#1b2a41"
+              }
+            },
+            "fontSize": 22
+          }
+        ],
+        "categoryLabels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#5b6573"
+              }
+            },
+            "fontSize": 10
+          }
+        ]
+      }
+    }
+  }
+}
