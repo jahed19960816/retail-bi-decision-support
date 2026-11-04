@@ -122,7 +122,7 @@ def connect(read_only: bool = True, db_path: Path = config.WAREHOUSE_DB) -> duck
 
 
 def run_sql_file(con: duckdb.DuckDBPyConnection, path: Path) -> pd.DataFrame:
-    return con.execute(path.read_text()).df()
+    return con.execute(path.read_text(encoding="utf-8")).df()
 
 
 def run_kpi_queries(sql_dir: Path = config.SQL_DIR / "kpis", out_dir: Path = config.TABLES_DIR) -> dict[str, pd.DataFrame]:

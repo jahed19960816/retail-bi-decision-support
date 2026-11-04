@@ -42,7 +42,7 @@ def table(name: str) -> pd.DataFrame:
 
 @st.cache_data(show_spinner=False)
 def facts() -> dict:
-    return json.loads((config.REPORTS_DIR / "facts.json").read_text())
+    return json.loads((config.REPORTS_DIR / "facts.json").read_text(encoding="utf-8"))
 
 
 def gbp(x: float) -> str:
@@ -157,7 +157,7 @@ def page_overview():
     )
 
     with st.expander("Executive insights brief (auto-generated)", expanded=False):
-        st.markdown((config.REPORTS_DIR / "insights.md").read_text())
+        st.markdown((config.REPORTS_DIR / "insights.md").read_text(encoding="utf-8"))
 
 
 def page_customers():
@@ -370,7 +370,7 @@ def page_assistant():
 
 def page_quality():
     st.title("Data quality & validation")
-    st.markdown((config.REPORTS_DIR / "data_quality.md").read_text())
+    st.markdown((config.REPORTS_DIR / "data_quality.md").read_text(encoding="utf-8"))
 
 
 PAGES = {

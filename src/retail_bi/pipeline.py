@@ -62,7 +62,7 @@ def write_data_quality_report(raw, log_df, prof, checks_df) -> None:
         "  (cohort and 'new customer' figures for that month are overstated).",
         "- Product families are keyword-derived from descriptions (about 5% of revenue stays in 'Other').",
     ]
-    (config.REPORTS_DIR / "data_quality.md").write_text("\n".join(lines) + "\n")
+    (config.REPORTS_DIR / "data_quality.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def write_model_report(selection, scores, improvement, weekly_improvement, spec, sil, seg_profile, curve, anomaly_eval, daily_flagged) -> None:
@@ -118,7 +118,7 @@ def write_model_report(selection, scores, improvement, weekly_improvement, spec,
         f"{anomaly_eval['normal_cancellation_rate_pct']}% for other orders (**{anomaly_eval['lift']}x lift**), and the queue",
         "  includes the two biggest cancelled bulk orders (80,995 and 74,215 units).",
     ]
-    (config.REPORTS_DIR / "model_results.md").write_text("\n".join(lines) + "\n")
+    (config.REPORTS_DIR / "model_results.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def run() -> dict:
@@ -215,8 +215,8 @@ def run() -> dict:
         "forecast_future": future, "anomaly_validation": anomaly_eval,
     }
     facts = insights.build_facts(results)
-    (config.REPORTS_DIR / "insights.md").write_text(insights.render_brief(facts))
-    (config.REPORTS_DIR / "facts.json").write_text(json.dumps(facts, indent=2, default=str))
+    (config.REPORTS_DIR / "insights.md").write_text(insights.render_brief(facts), encoding="utf-8")
+    (config.REPORTS_DIR / "facts.json").write_text(json.dumps(facts, indent=2, default=str), encoding="utf-8")
     _done(t)
 
     t = _step("8/8 Warehouse extras & Power BI export")
