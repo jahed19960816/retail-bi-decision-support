@@ -65,7 +65,7 @@ def write_data_quality_report(raw, log_df, prof, checks_df) -> None:
     (config.REPORTS_DIR / "data_quality.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def write_model_report(selection, scores, improvement, weekly_improvement, spec, sil, seg_profile, curve, anomaly_eval, daily_flagged) -> None:
+def write_model_report(selection, scores, improvement, weekly_improvement, spec, multipliers, band_check, sil, seg_profile, curve, anomaly_eval, daily_flagged) -> None:
     lines = [
         "# Model results",
         "",
@@ -91,6 +91,16 @@ def write_model_report(selection, scores, improvement, weekly_improvement, spec,
         f"{weekly_improvement['error_reduction_pct']:.1f}% lower error.",
         "- WAPE = sum(|actual - forecast|) / sum(actual). Lower is better. The model also has lower bias than the",
         "  short-term baselines, which under-forecast the autumn ramp-up.",
+        "",
+        "**80% range for each day.** Quantile gradient boosting was rejected on the validation window: about 18% of days",
+        "have zero revenue, which pinned its low edge at 0. The range now comes from past backtest errors instead.",
+        "",
+        f"- On open days, actual revenue usually landed between {multipliers[0]:.2f}x and {multipliers[1]:.2f}x the forecast. "
+        "The range is the forecast times those multipliers. Saturdays are closed, so they run from 0 up to the forecast.",
+        f"- Checked on the test folds over {band_check['open_days']} open days, calibrating each fold only on earlier folds: "
+        f"**{band_check['coverage_pct']}%** of days fell inside (target 80%), {band_check['below_lower_pct']}% below and "
+        f"{band_check['above_upper_pct']}% above.",
+        "- The range applies to one day at a time. Adding up daily edges does not give an 80% range for a week or a month.",
         "",
         "## 2. Customer segmentation (RFM + K-Means)",
         "",
@@ -172,7 +182,11 @@ def run() -> dict:
     scores = forecast.score(bt)
     improvement = forecast.improvement_vs_best_baseline(scores)
     weekly_improvement = forecast.improvement_vs_best_baseline(scores, "weekly_wape_pct")
-    future = forecast.forecast_future(daily, spec)
+    history = forecast.backtest(daily, forecast.fold_starts(daily, 2 * config.BACKTEST_FOLDS, skip_folds=config.BACKTEST_FOLDS), spec)
+    band_check = forecast.score_interval(history, bt)
+    multipliers = forecast.interval_multipliers(pd.concat([history, bt]))
+    future = forecast.forecast_future(daily, spec, multipliers)
+    pd.DataFrame([band_check]).to_csv(config.TABLES_DIR / "forecast_interval_check.csv", index=False)
     selection.to_csv(config.TABLES_DIR / "forecast_model_selection.csv", index=False)
     scores.to_csv(config.TABLES_DIR / "forecast_scores.csv", index=False)
     bt.round(2).to_csv(config.TABLES_DIR / "forecast_backtest.csv")
@@ -208,7 +222,7 @@ def run() -> dict:
     )
     plots.product_family_growth(kpis["product_family"])
     plots.top_countries(kpis["country_performance"])
-    write_model_report(selection, scores, improvement, weekly_improvement, spec, sil, seg_profile, curve, anomaly_eval, daily_scored)
+    write_model_report(selection, scores, improvement, weekly_improvement, spec, multipliers, band_check, sil, seg_profile, curve, anomaly_eval, daily_scored)
 
     results = {
         "kpis": kpis, "segment_profile": seg_profile, "forecast_improvement": improvement,

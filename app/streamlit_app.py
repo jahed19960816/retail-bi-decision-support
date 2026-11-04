@@ -273,7 +273,7 @@ def page_forecast():
         tooltip=[alt.Tooltip("date:T"), "series", alt.Tooltip("value:Q", format=",.0f", title="£")],
     )
     st.altair_chart((band + lines).properties(height=360), width="stretch")
-    st.caption("Shaded band = 80% prediction interval (quantile gradient boosting). Saturdays and the Christmas shutdown are ~£0.")
+    st.caption("Shaded band = 80% range for each day, based on how far actuals landed from the forecast in past backtests. Saturdays and the Christmas shutdown are ~£0.")
 
     st.subheader("How good is the model? (6-month backtest)")
     scores = table("forecast_scores")

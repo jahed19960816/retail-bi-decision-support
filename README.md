@@ -93,7 +93,7 @@ flowchart LR
   (lags ≥ 28 days, last year's values, calendar), so there's no look-ahead leakage. A unit test enforces this.
 - **Rolling-origin backtest.** Model settings were chosen on a validation window (Jan–Jun 2011). Results are
   reported on the last 6 months, which were never used for selection.
-- Compared with three baselines a planner would actually use. Quantile models provide an 80% prediction interval.
+- Compared with three baselines a planner would actually use. Each day also gets an 80% range based on past backtest errors, checked on the test months (see the [model report](reports/model_results.md)).
 
 | Method | Daily WAPE | Weekly WAPE |
 |---|---|---|
@@ -145,7 +145,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
 python run_pipeline.py             # downloads the data (~45 MB) and builds everything
-pytest                             # 42 tests
+pytest                             # 45 tests
 streamlit run app/streamlit_app.py # interactive app at http://localhost:8501
 ```
 
@@ -180,7 +180,7 @@ Power BI: see [`powerbi/POWER_BI_GUIDE.md`](powerbi/POWER_BI_GUIDE.md). The pipe
 ├── app/streamlit_app.py       # 7-page interactive app
 ├── powerbi/                   # DAX measures + build guide (CSVs generated)
 ├── reports/                   # figures, tables, insights, model + data-quality reports
-└── tests/                     # 42 tests (cleaning, SQL guard, leakage, SQL vs pandas, ...)
+└── tests/                     # 45 tests (cleaning, SQL guard, leakage, SQL vs pandas, ...)
 ```
 
 ## Limitations & next steps

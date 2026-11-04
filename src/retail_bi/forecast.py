@@ -6,8 +6,11 @@ Setup
 * Every feature is known at least `H` = 28 days before the forecast date
   (lags >= 28 days, calendar features), so a single model can forecast the
   whole next 4 weeks without leaking future information.
-* Model: gradient-boosted trees (scikit-learn HistGradientBoostingRegressor),
-  plus quantile models for an 80% prediction interval.
+* Model: gradient-boosted trees (scikit-learn HistGradientBoostingRegressor).
+* 80% range for each day: the forecast times the 10th and 90th percentile of
+  actual / forecast on open days in past backtest folds. Quantile models were
+  rejected on the validation window: about 18% of days have zero revenue, which
+  pinned their 10th percentile at 0.
 
 Evaluation
 ----------
@@ -27,6 +30,7 @@ from retail_bi import config
 
 H = config.FORECAST_HORIZON_DAYS
 SAME_DOW_LAGS = [28, 35, 42, 49]
+CLOSED_DOW = 5  # Saturday: the shop does not trade (99% of Saturdays have zero revenue)
 
 BASELINES = {
     "Seasonal naive (same weekday, 4 weeks ago)": "lag_28",
@@ -89,8 +93,9 @@ class ModelSpec:
     # Forecast combination: blend weight given to last year's same-weekday value (0 = model only).
     blend_last_year: float = 0.0
 
-    def model(self, quantile: float | None = None) -> HistGradientBoostingRegressor:
-        params = dict(
+    def model(self) -> HistGradientBoostingRegressor:
+        return HistGradientBoostingRegressor(
+            loss=self.loss,
             learning_rate=self.learning_rate,
             max_iter=self.max_iter,
             max_leaf_nodes=self.max_leaf_nodes,
@@ -98,16 +103,13 @@ class ModelSpec:
             l2_regularization=self.l2_regularization,
             random_state=config.RANDOM_STATE,
         )
-        if quantile is not None:
-            return HistGradientBoostingRegressor(loss="quantile", quantile=quantile, **params)
-        return HistGradientBoostingRegressor(loss=self.loss, **params)
 
 
-def _fit_predict(spec: ModelSpec, X_train, y_train, X_test, quantile: float | None = None) -> np.ndarray:
+def _fit_predict(spec: ModelSpec, X_train, y_train, X_test) -> np.ndarray:
     # Early folds have < 1 year of history, so yearly features can be entirely empty there.
     usable = [c for c in X_train.columns if X_train[c].nunique(dropna=True) > 1]
     target = np.log1p(y_train.clip(lower=0)) if spec.target == "log1p" else y_train
-    model = spec.model(quantile).fit(X_train[usable], target)
+    model = spec.model().fit(X_train[usable], target)
     pred = model.predict(X_test[usable])
     if spec.target == "log1p":
         pred = np.expm1(pred)
@@ -190,18 +192,48 @@ def improvement_vs_best_baseline(scores: pd.DataFrame, metric: str = "daily_wape
     }
 
 
-def forecast_future(y: pd.Series, spec: ModelSpec, horizon: int = H) -> pd.DataFrame:
-    """Train on all history and forecast the next `horizon` days with an 80% interval."""
+def interval_multipliers(bt: pd.DataFrame) -> tuple[float, float]:
+    """How far actuals landed from the forecast on open days: 10th and 90th percentile of actual / forecast."""
+    open_days = bt[(bt.index.day_of_week != CLOSED_DOW) & (bt["model"] > 0)]
+    low, high = np.quantile(open_days["actual"] / open_days["model"], [0.10, 0.90])
+    return min(max(float(low), 0.0), 1.0), max(float(high), 1.0)
+
+
+def interval(pred: pd.Series, multipliers: tuple[float, float]) -> pd.DataFrame:
+    """80% range for each day: the forecast times the multipliers. Closed days run from 0 up to the forecast."""
+    is_open = pred.index.day_of_week != CLOSED_DOW
+    return pd.DataFrame({
+        "lower_80": (pred * multipliers[0]).where(is_open, 0.0),
+        "upper_80": (pred * multipliers[1]).where(is_open, pred),
+    })
+
+
+def score_interval(history: pd.DataFrame, test: pd.DataFrame) -> dict:
+    """Out-of-sample check of the band on open days: each test fold is calibrated only on folds before it."""
+    parts = []
+    for fold, rows in test.groupby("fold"):
+        past = pd.concat([history, test[test["fold"] < fold]])
+        parts.append(rows.join(interval(rows["model"], interval_multipliers(past))))
+    scored = pd.concat(parts)
+    scored = scored[scored.index.day_of_week != CLOSED_DOW]
+    below, above = scored["actual"] < scored["lower_80"], scored["actual"] > scored["upper_80"]
+    return {
+        "open_days": len(scored),
+        "coverage_pct": round(float((~below & ~above).mean() * 100), 1),
+        "below_lower_pct": round(float(below.mean() * 100), 1),
+        "above_upper_pct": round(float(above.mean() * 100), 1),
+    }
+
+
+def forecast_future(y: pd.Series, spec: ModelSpec, multipliers: tuple[float, float], horizon: int = H) -> pd.DataFrame:
+    """Train on all history and forecast the next `horizon` days with an 80% range."""
     end = y.index.max() + pd.Timedelta(days=horizon)
     X = build_features(y, end=end)
     train = _train_mask(X, y, y.index.max() + pd.Timedelta(days=1))
     future_idx = X.index[X.index > y.index.max()]
-    out = pd.DataFrame(index=future_idx)
-    out["forecast"] = _blend(spec, _fit_predict(spec, X[train], y[train], X.loc[future_idx]), X.loc[future_idx])
-    out["lower_80"] = _fit_predict(spec, X[train], y[train], X.loc[future_idx], quantile=0.10)
-    out["upper_80"] = _fit_predict(spec, X[train], y[train], X.loc[future_idx], quantile=0.90)
-    out["lower_80"] = np.minimum(out["lower_80"], out["forecast"])
-    out["upper_80"] = np.maximum(out["upper_80"], out["forecast"])
+    pred = pd.Series(_blend(spec, _fit_predict(spec, X[train], y[train], X.loc[future_idx]), X.loc[future_idx]), index=future_idx)
+    out = interval(pred, multipliers)
+    out.insert(0, "forecast", pred)
     out.index.name = "date"
     return out.round(2)
 

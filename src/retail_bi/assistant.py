@@ -39,7 +39,7 @@ Business definitions (use these exactly):
 - customer_id is NULL for guest checkouts; exclude NULLs for customer-level questions.
 - dim_product.product_family is a keyword-derived category; dim_customer.cohort_month is the first-purchase month.
 - customer_segments has the RFM segment per customer (Champions, Loyal Customers, At Risk, New / Promising, Hibernating).
-- daily_forecast has the next-28-day revenue forecast with an 80% interval.
+- daily_forecast has the next-28-day revenue forecast with an 80% range for each single day. Do not add up lower_80 or upper_80 across days: the sum is not an 80% range.
 """
 
 SQL_SYSTEM_PROMPT = """You are a senior data analyst for a UK online gift wholesaler. You translate business \
@@ -106,8 +106,7 @@ EXAMPLE_QUESTIONS = {
         FROM fact_sales f JOIN dim_product p ON f.stock_code = p.stock_code
         GROUP BY 1 ORDER BY return_rate_pct DESC""",
     "What revenue is forecast for each of the next 4 weeks?": """
-        SELECT DATE_TRUNC('week', date) AS week_start, ROUND(SUM(forecast), 2) AS forecast,
-               ROUND(SUM(lower_80), 2) AS lower_80, ROUND(SUM(upper_80), 2) AS upper_80
+        SELECT DATE_TRUNC('week', date) AS week_start, ROUND(SUM(forecast), 2) AS forecast
         FROM daily_forecast GROUP BY 1 ORDER BY 1""",
 }
 

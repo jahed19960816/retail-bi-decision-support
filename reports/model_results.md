@@ -33,6 +33,13 @@ Selected: `gbm_mse_shallow+last_year_30` (HistGradientBoostingRegressor, squared
 - WAPE = sum(|actual - forecast|) / sum(actual). Lower is better. The model also has lower bias than the
   short-term baselines, which under-forecast the autumn ramp-up.
 
+**80% range for each day.** Quantile gradient boosting was rejected on the validation window: about 18% of days
+have zero revenue, which pinned its low edge at 0. The range now comes from past backtest errors instead.
+
+- On open days, actual revenue usually landed between 0.55x and 1.69x the forecast. The range is the forecast times those multipliers. Saturdays are closed, so they run from 0 up to the forecast.
+- Checked on the test folds over 144 open days, calibrating each fold only on earlier folds: **83.3%** of days fell inside (target 80%), 9.0% below and 7.6% above.
+- The range applies to one day at a time. Adding up daily edges does not give an 80% range for a week or a month.
+
 ## 2. Customer segmentation (RFM + K-Means)
 
 Silhouette score by number of clusters (log-scaled, standardised R/F/M):
