@@ -135,7 +135,7 @@ table _Measures
 		displayFolder: Segments
 		lineageTag: 3a81fc58-57c6-48fe-9d6a-08d4d7dcdcf8
 
-	measure 'Segment Revenue Share %' = DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALL ( dim_customer[segment] ) ) )
+	measure 'Segment Revenue Share %' = DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALL ( dim_customer[segment] ), NOT ISBLANK ( fact_sales[customer_id] ) ) )
 		formatString: 0.0%
 		displayFolder: Segments
 		lineageTag: fec285b0-f093-4af0-98aa-6acdd4855d97

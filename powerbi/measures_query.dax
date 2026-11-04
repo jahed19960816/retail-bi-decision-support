@@ -87,7 +87,7 @@ DEFINE
         CALCULATE ( COUNTROWS ( dim_customer ), dim_customer[segment] = "At Risk" )
 
     MEASURE '_Measures'[Segment Revenue Share %] =
-        DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALL ( dim_customer[segment] ) ) )
+        DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALL ( dim_customer[segment] ), NOT ISBLANK ( fact_sales[customer_id] ) ) )
 
     MEASURE '_Measures'[Actual Revenue (forecast table)] =
         SUM ( fact_forecast[actual] )
